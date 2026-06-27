@@ -1,3 +1,5 @@
+.cache/
+sessions/
 elpa/
 elpaca/
 eln-cache/
