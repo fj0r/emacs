@@ -18,6 +18,11 @@
 (push '(right-fringe . 1) default-frame-alist)
 (push '(fullscreen . maximized) default-frame-alist)
 (push '(undecorated . t) default-frame-alist)
+;; 中文字体 fallback
+(set-frame-font "Lilex-11" nil t)
+(set-fontset-font "fontset-default" (quote (#x4E00 . #x9FFF)) "Noto Sans Mono CJK SC-11")
+(set-fontset-font "fontset-default" (quote (#x3000 . #x303F)) "Noto Sans Mono CJK SC-11")
+(set-fontset-font "fontset-default" (quote (#xFF00 . #xFFEF)) "Noto Sans Mono CJK SC-11")
 (setq-default indent-tabs-mode nil)
 (setq-default tab-width 4)
 (show-paren-mode 1)
@@ -26,7 +31,7 @@
 (recentf-mode 1)
 (global-display-line-numbers-mode 1)
 (setq display-line-numbers-type 'relative)
-(setq package-enable-at-startup nil)
+(setq warning-suppress-types '((comp) (native-compiler)))
 
 ;; ==========================================
 ;; 2. Elpaca 异步包管理器
@@ -86,8 +91,11 @@
 (use-package boon
   :config
   (require 'boon-qwerty)
-  (turn-on-boon-mode)
+  (boon-mode 1)
   (define-key boon-moves-map (kbd "<escape>") 'boon-command-mode))
+
+;; 无模态编辑时的后备：默认进入 view-mode 防止误编辑
+;; (setq initial-major-mode 'view-mode)
 
 ;; ==========================================
 ;; 5. 辅助效率插件
@@ -165,15 +173,20 @@
 ;; ==========================================
 ;; 9. Theme
 ;; ==========================================
-(use-package doom-themes
+(use-package gruvbox-theme
   :config
-  (load-theme 'doom-one t))
+  (load-theme 'gruvbox-light-medium t))
 
 ;; ==========================================
 ;; 10. lsp-bridge (从 GitHub 安装，MELPA 没有)
-;;     依赖 NixOS Python 包：epc orjson sexpdata six setuptools
+;;     依赖 NixOS Python 包：epc orjson sexpdata six
 ;;     paramiko rapidfuzz watchdog packaging
 ;; ==========================================
+(use-package yasnippet
+  :ensure t
+  :init (yas-global-mode 1))
+(elpaca-wait)
+
 (elpaca (lsp-bridge :host github :repo "manateelazycat/lsp-bridge"
                      :files (:defaults "acm" "core" "langserver"
                                        "resources" "lsp-bridge.py")))
